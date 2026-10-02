@@ -1,0 +1,142 @@
+{
+  "benchmark_summary": {
+    "dense": {
+      "mean_latency_ms": 7.72,
+      "std_latency_ms": 1.96,
+      "precision_at_1": 1.0,
+      "precision_at_3": 1.0,
+      "precision_at_5": 0.992
+    },
+    "bm25": {
+      "mean_latency_ms": 0.52,
+      "std_latency_ms": 0.66,
+      "precision_at_1": 0.96,
+      "precision_at_3": 0.987,
+      "precision_at_5": 0.992
+    },
+    "tfidf": {
+      "mean_latency_ms": 1.44,
+      "std_latency_ms": 0.93,
+      "precision_at_1": 1.0,
+      "precision_at_3": 1.0,
+      "precision_at_5": 0.992
+    }
+  },
+  "spot_checks": [
+    {
+      "query": "What is Hibernate and what does it provide?",
+      "methods": {
+        "dense": {
+          "top_hit_score": 0.6108,
+          "latency_ms": 6.39,
+          "generated_answer": "Hibernate is an open-source solution that revolutionized how Java developers interact with relational databases",
+          "generation_ms": 2686.67
+        },
+        "bm25": {
+          "top_hit_score": 3.2022,
+          "latency_ms": 1.83,
+          "generated_answer": "Hibernate is a critical component in the modern Java ecosystem, serving as an Object-Relational Mapping (ORM) framework",
+          "generation_ms": 3354.7
+        },
+        "tfidf": {
+          "top_hit_score": 0.0925,
+          "latency_ms": 3.26,
+          "generated_answer": "Hibernate is a layered and modular design that provides developers with essential benefits that define modern enterprise persistence layers.",
+          "generation_ms": 3014.56
+        }
+      }
+    },
+    {
+      "query": "What is SessionFactory in Hibernate?",
+      "methods": {
+        "dense": {
+          "top_hit_score": 0.66,
+          "latency_ms": 6.03,
+          "generated_answer": "Hibernate is not thread-safe), it is not thread-safe.",
+          "generation_ms": 2210.56
+        },
+        "bm25": {
+          "top_hit_score": 1.8242,
+          "latency_ms": 0.16,
+          "generated_answer": "JDBC compatibility, Hibernate is able to support thread-safe applications.",
+          "generation_ms": 2429.45
+        },
+        "tfidf": {
+          "top_hit_score": 0.1293,
+          "latency_ms": 0.8,
+          "generated_answer": "The centralized source for managing resources and persistence services across the entire application.",
+          "generation_ms": 2476.6
+        }
+      }
+    },
+    {
+      "query": "How does Object-Relational Mapping (ORM) work?",
+      "methods": {
+        "dense": {
+          "top_hit_score": 0.4785,
+          "latency_ms": 6.85,
+          "generated_answer": "The provided documents do not contain sufficient information to answer this question. Hibernate: Overview and Architecture",
+          "generation_ms": 2638.83
+        },
+        "bm25": {
+          "top_hit_score": 1.4412,
+          "latency_ms": 0.14,
+          "generated_answer": "Hibernate acts as a powerful middleware, bridging the gap between the object-oriented world of Java and the relational world of databases.",
+          "generation_ms": 3311.87
+        },
+        "tfidf": {
+          "top_hit_score": 0.144,
+          "latency_ms": 0.86,
+          "generated_answer": "consistency. The Transaction: Ensuring Integrity. The Transaction: Ensuring Integrity.",
+          "generation_ms": 2446.04
+        }
+      }
+    },
+    {
+      "query": "What is the role of the Session interface in Hibernate?",
+      "methods": {
+        "dense": {
+          "top_hit_score": 0.6258,
+          "latency_ms": 7.91,
+          "generated_answer": "The provided documents do not contain sufficient information to answer this question. [Source 1 | Document: Hibernate-Overview-and-Architecture.pdf, Page 1]",
+          "generation_ms": 4130.2
+        },
+        "bm25": {
+          "top_hit_score": 2.933,
+          "latency_ms": 0.17,
+          "generated_answer": "Hibernate is an open-source solution that revolutionized how Java developers interact with relational databases",
+          "generation_ms": 2776.58
+        },
+        "tfidf": {
+          "top_hit_score": 0.1178,
+          "latency_ms": 0.92,
+          "generated_answer": "The provided documents do not contain sufficient information to answer this question. [Source 1 | Document: Hibernate-Overview-and-Architecture.pdf, Page 1]",
+          "generation_ms": 5791.06
+        }
+      }
+    },
+    {
+      "query": "What is JDBC and how does Hibernate interact with it?",
+      "methods": {
+        "dense": {
+          "top_hit_score": 0.6849,
+          "latency_ms": 11.44,
+          "generated_answer": "Hibernate is an open-source solution that revolutionized how Java developers interact with relational databases",
+          "generation_ms": 4070.55
+        },
+        "bm25": {
+          "top_hit_score": 2.8955,
+          "latency_ms": 0.32,
+          "generated_answer": "JDBC compatibility, Hibernate is able to support thread-safe applications.",
+          "generation_ms": 3887.74
+        },
+        "tfidf": {
+          "top_hit_score": 0.1132,
+          "latency_ms": 1.37,
+          "generated_answer": "Oracle, MySQL, PostgreSQL, and Oracle databases.",
+          "generation_ms": 3218.27
+        }
+      }
+    }
+  ]
+}

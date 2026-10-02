@@ -1,0 +1,22 @@
+# Environments
+venv/
+env/
+.env
+
+# Python caches
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Databases and large binary files
+data/
+*.db
+*.index
+*.pkl
+
+# Editor configs
+.vscode/
+.idea/
+
+# OS files
+.DS_Store

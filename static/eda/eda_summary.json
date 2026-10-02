@@ -1,0 +1,32 @@
+{
+  "total_chunks": 1034,
+  "total_words": 79211,
+  "total_unique_words": 5755,
+  "mean_chunk_words": 76.61,
+  "median_chunk_words": 69.0,
+  "std_chunk_words": 54.27,
+  "min_chunk_words": 2,
+  "max_chunk_words": 180,
+  "top_keywords": {
+    "software": 733,
+    "system": 330,
+    "process": 277,
+    "set": 259,
+    "state": 248,
+    "engineering": 238,
+    "design": 218,
+    "department": 210,
+    "problem": 201,
+    "knowledge": 194,
+    "search": 187,
+    "testing": 186,
+    "requirements": 172,
+    "project": 156,
+    "model": 148,
+    "user": 140,
+    "development": 133,
+    "intelligence": 132,
+    "artificial": 130,
+    "example": 129
+  }
+}

@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>mimir.rag | feed me information.</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            anker: {
+              bg: '#05070e', // Very dark blue/black background
+              nav: '#080b13', // Slightly lighter header
+              card: '#111724', // Card background gradient start
+              cardEnd: '#0a0e17', // Card background gradient end
+              cardHover: '#171f30',
+              border: '#1f2937',
+              pill: '#161c2d', // Dark pill background for active tab
+              cyan: '#1cb0f6', // Bright neon cyan
+              cyanHover: '#1498d6',
+              green: '#00d26a', // Neon green
+              text: '#ffffff',
+              muted: '#94a3b8', // Grayish blue text
+            }
+          },
+          backgroundImage: {
+            'card-gradient': 'linear-gradient(180deg, #111724 0%, #0a0e17 100%)',
+            'hero-gradient': 'linear-gradient(to right, rgba(5,7,14,0.95) 0%, rgba(5,7,14,0.7) 50%, rgba(5,7,14,0.4) 100%)',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom scrollbar to match dark aesthetic */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #05070e; }
+    ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #1cb0f6; }
+    
+    /* Input focus glow */
+    .glow-focus:focus-within {
+      box-shadow: 0 0 0 2px rgba(28, 176, 246, 0.3);
+      border-color: #1cb0f6;
+    }
+  </style>
+</head>
+<body class="bg-anker-bg text-anker-text min-h-screen font-sans antialiased text-[14px]">
+
+  <!-- Header Navigation -->
+  <header class="bg-anker-nav border-b border-anker-border h-[72px] flex items-center justify-between px-6 sticky top-0 z-50">
+    <div class="flex items-center gap-10">
+      
+      <!-- Logo & Tagline -->
+      <div class="flex items-baseline gap-3 cursor-pointer select-none" onclick="switchTab('qa')">
+        <div class="font-black text-2xl tracking-tighter italic">
+          <span class="text-white">mimir.</span><span class="text-anker-cyan">rag</span>
+        </div>
+        <span class="hidden md:inline-block text-[11px] font-bold text-anker-cyan uppercase tracking-widest opacity-80">
+          feed me information.
+        </span>
+      </div>
+      
+      <!-- Navigation Links -->
+      <nav class="hidden md:flex items-center space-x-2 text-[14px] font-medium text-anker-text">
+        <button onclick="switchTab('qa')" id="tab-btn-qa" class="tab-btn active px-4 py-2 rounded-[8px] bg-anker-pill transition">Search Query</button>
+        <button onclick="switchTab('corpus')" id="tab-btn-corpus" class="tab-btn px-4 py-2 rounded-[8px] hover:bg-anker-pill transition">Corpus Management</button>
+        <button onclick="switchTab('compare')" id="tab-btn-compare" class="tab-btn px-4 py-2 rounded-[8px] hover:bg-anker-pill transition">Retriever Diagnostics</button>
+      </nav>
+    </div>
+
+    <!-- Right Icons -->
+    <div class="flex items-center gap-5 text-anker-text">
+      <div class="flex items-center gap-2 text-[13px] font-medium bg-anker-pill px-3 py-1.5 rounded-full border border-anker-border">
+        <span class="w-2 h-2 rounded-full bg-anker-green animate-pulse"></span>
+        <span id="header-chunk-count">0 chunks</span>
+      </div>
+      
+      <button class="hover:text-anker-cyan transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg></button>
+      
+      <!-- Profile Avatar -->
+      <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-purple-600 to-anker-cyan flex items-center justify-center font-bold shadow-lg shadow-anker-cyan/20 cursor-pointer">
+        A
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-[1200px] mx-auto px-6 py-10">
+
+    <!-- ================= TAB 1: QA / SEARCH ================= -->
+    <div id="tab-qa" class="tab-content block space-y-10">
+      
+      <!-- Hero Section / Query Box -->
+      <div class="relative rounded-[20px] overflow-hidden border border-anker-border bg-card-gradient p-8 md:p-12 shadow-2xl">
+        <!-- Abstract background decorations -->
+        <div class="absolute top-0 right-0 w-[600px] h-full bg-anker-cyan/5 blur-[100px] rounded-full pointer-events-none"></div>
+        
+        <div class="relative z-10 max-w-[700px]">
+          <div class="inline-block px-3 py-1 mb-5 rounded bg-anker-green font-bold text-black text-[12px] uppercase tracking-wider">
+            Neural Retrieval Engine
+          </div>
+          
+          <h1 class="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Ask anything about your uploaded documents.</h1>
+          <p class="text-anker-muted text-[15px] mb-8 leading-relaxed">
+            The advanced RAG pipeline automatically retrieves the most relevant 150-word chunks and synthesizes a direct answer using Flan-T5.
+          </p>
+
+          <div class="space-y-4">
+            <div class="bg-anker-bg border border-anker-border rounded-[12px] p-2 flex items-center glow-focus transition">
+              <input type="text" id="query-input" placeholder="e.g. What is unsupervised learning?" class="flex-1 bg-transparent border-none outline-none text-white px-4 py-3 text-[16px] placeholder-anker-muted">
+            </div>
+
+            <!-- Suggestion tags -->
+            <div class="flex flex-wrap gap-2 text-[12px]">
+              <button onclick="setQuery(this.innerText)" class="px-3 py-1.5 rounded bg-anker-pill text-anker-muted hover:text-white border border-anker-border transition">What is Hibernate?</button>
+              <button onclick="setQuery(this.innerText)" class="px-3 py-1.5 rounded bg-anker-pill text-anker-muted hover:text-white border border-anker-border transition">How does mapping work?</button>
+              
+              <!-- Hidden settings toggle -->
+              <details class="relative ml-auto">
+                <summary class="px-3 py-1.5 rounded bg-anker-pill text-anker-cyan hover:text-white border border-anker-border transition cursor-pointer flex items-center gap-1 list-none">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                  Tuning
+                </summary>
+                <div class="absolute right-0 top-full mt-2 w-[300px] bg-anker-nav border border-anker-border rounded-xl p-4 shadow-2xl z-20">
+                  <label class="block text-[11px] text-anker-muted uppercase font-bold mb-2">Algorithm</label>
+                  <select id="retriever-select" class="w-full bg-anker-bg border border-anker-border text-white text-[13px] rounded p-2 mb-4 outline-none">
+                    <option value="dense" selected>Dense Semantic (FAISS)</option>
+                    <option value="bm25">BM25 (Lexical)</option>
+                    <option value="tfidf">TF-IDF Baseline</option>
+                  </select>
+                  <label class="flex items-center gap-2 cursor-pointer text-[12px] text-anker-muted">
+                    <input type="checkbox" id="rerank-toggle" checked class="accent-anker-cyan w-4 h-4">
+                    Enable Cross-Encoder Reranker
+                  </label>
+                </div>
+              </details>
+            </div>
+          </div>
+          
+          <div class="mt-8 flex items-center gap-4">
+            <button onclick="askQuestion()" id="ask-btn" class="px-8 py-3.5 bg-anker-cyan hover:bg-anker-cyanHover text-white font-bold rounded-[10px] transition flex items-center gap-2 text-[15px] shadow-lg shadow-anker-cyan/20">
+              Generate Answer
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            </button>
+            <button onclick="document.getElementById('query-input').value=''" class="px-6 py-3.5 text-anker-text hover:text-white font-medium flex items-center gap-2 transition">
+              Reset <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State / Loading State (We will use JS to toggle these) -->
+      <div id="qa-empty" class="hidden"></div>
+      
+      <div id="qa-loading" class="hidden py-16 text-center">
+        <div class="inline-block w-10 h-10 border-4 border-anker-cyan/20 border-t-anker-cyan rounded-full animate-spin mb-4"></div>
+        <p id="loading-timer" class="text-[15px] text-anker-muted font-medium">Processing via Neural RAG Pipeline...</p>
+      </div>
+
+      <!-- Result Section -->
+      <div id="answer-card" class="hidden mt-10 space-y-6">
+        
+        <div class="flex items-center justify-between border-b border-anker-border pb-4">
+          <h2 class="text-2xl font-bold tracking-tight">Generated Output</h2>
+          <span id="timing-badge" class="text-[12px] font-mono text-anker-cyan bg-anker-cyan/10 px-2.5 py-1 rounded"></span>
+        </div>
+
+        <div id="qa-result" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          <!-- AI Summary block -->
+          <div class="lg:col-span-2 bg-card-gradient border border-anker-border rounded-[16px] p-8 shadow-xl relative overflow-hidden">
+            <!-- Glow accent -->
+            <div class="absolute top-0 left-0 w-1/2 h-[2px] bg-gradient-to-r from-transparent via-anker-cyan to-transparent opacity-50"></div>
+            
+            <div id="answer-text" class="text-[16px] leading-[1.7] text-[#e2e8f0] whitespace-pre-line"></div>
+            
+            <div class="mt-8 flex justify-end">
+               <button onclick="copyAnswer()" id="copy-btn" class="px-4 py-2 rounded bg-anker-pill border border-anker-border text-[12px] font-bold text-anker-text hover:text-anker-cyan hover:border-anker-cyan transition flex items-center gap-2">
+                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                 COPY TEXT
+               </button>
+            </div>
+          </div>
+
+          <!-- Sources Bar Area (Mimicking game cards) -->
+          <div id="sources-bar" class="hidden lg:col-span-1 space-y-4">
+            <h3 class="text-[14px] font-bold text-anker-muted uppercase tracking-wider mb-2">Sources (Citations)</h3>
+            <!-- source chips injected here by JS, we style them in CSS below -->
+            <div id="source-chips" class="flex flex-col gap-3"></div>
+            
+            <div id="excerpts-container" class="hidden"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ================= TAB 2: CORPUS ================= -->
+    <div id="tab-corpus" class="tab-content hidden space-y-8">
+      
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Upload Card -->
+        <div class="lg:col-span-1 bg-card-gradient border border-anker-border rounded-[16px] p-6 shadow-xl h-fit">
+          <h3 class="text-[18px] font-bold mb-2">Upload Document</h3>
+          <p class="text-[13px] text-anker-muted mb-6">Chunks are heavily optimized into 150-word blocks based on slide layouts.</p>
+          
+          <div id="drop-zone" class="border-2 border-dashed border-anker-border hover:border-anker-cyan bg-anker-bg rounded-xl p-8 text-center cursor-pointer transition glow-focus">
+            <svg class="w-10 h-10 text-anker-muted mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+            <p class="text-[14px] font-bold text-anker-cyan">Select or drag PDF</p>
+            <input type="file" id="file-input" accept=".pdf" class="hidden">
+          </div>
+          <div id="upload-status" class="hidden mt-4 text-[13px] p-3 rounded bg-anker-pill border border-anker-border font-medium"></div>
+        </div>
+
+        <!-- Doc Table -->
+        <div class="lg:col-span-2 bg-card-gradient border border-anker-border rounded-[16px] shadow-xl overflow-hidden">
+          <div class="flex items-center justify-between p-5 border-b border-anker-border">
+            <h3 class="text-[18px] font-bold">Corpus Inventory</h3>
+            <button onclick="loadPDFs()" class="text-[13px] font-medium text-anker-cyan hover:underline">Refresh</button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-[14px]">
+              <thead class="bg-anker-nav border-b border-anker-border text-anker-muted text-[12px] uppercase tracking-wider">
+                <tr>
+                  <th class="py-4 px-5 font-bold">Filename</th>
+                  <th class="py-4 px-5 font-bold">Pages</th>
+                  <th class="py-4 px-5 font-bold">Chunks</th>
+                  <th class="py-4 px-5 font-bold text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody id="full-doc-table" class="divide-y divide-anker-border">
+                <tr><td colspan="4" class="py-8 px-5 text-center text-anker-muted">Loading documents...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- EDA Section -->
+      <div class="bg-card-gradient border border-anker-border rounded-[16px] shadow-xl overflow-hidden mt-8">
+        <div class="flex flex-wrap items-center justify-between p-6 border-b border-anker-border gap-4">
+          <div>
+            <h3 class="text-[18px] font-bold">Corpus Analytics (EDA)</h3>
+            <p class="text-[13px] text-anker-muted">Vocabulary frequency and chunk size variance.</p>
+          </div>
+          <button onclick="runEDAServer()" id="eda-run-btn" class="px-4 py-2 text-[13px] font-bold rounded-[8px] bg-anker-pill border border-anker-border hover:bg-anker-border transition">
+            Re-compute
+          </button>
+        </div>
+
+        <div class="p-6">
+          <div class="grid grid-cols-2 md:grid-cols-6 gap-4" id="eda-stats-grid">
+            <div class="bg-anker-nav border border-anker-border rounded-xl p-4 text-center">
+              <div class="text-[11px] text-anker-muted uppercase font-bold tracking-wider mb-1">Chunks</div>
+              <div id="eda-total-chunks" class="text-[24px] font-bold text-white">--</div>
+            </div>
+            <div class="bg-anker-nav border border-anker-border rounded-xl p-4 text-center">
+              <div class="text-[11px] text-anker-muted uppercase font-bold tracking-wider mb-1">Words</div>
+              <div id="eda-total-words" class="text-[24px] font-bold text-anker-cyan">--</div>
+            </div>
+            <div class="bg-anker-nav border border-anker-border rounded-xl p-4 text-center">
+              <div class="text-[11px] text-anker-muted uppercase font-bold tracking-wider mb-1">Vocab</div>
+              <div id="eda-unique-words" class="text-[24px] font-bold text-anker-green">--</div>
+            </div>
+            <div class="bg-anker-nav border border-anker-border rounded-xl p-4 text-center">
+              <div class="text-[11px] text-anker-muted uppercase font-bold tracking-wider mb-1">Mean Chk</div>
+              <div id="eda-mean-chunk" class="text-[24px] font-bold text-white">--</div>
+            </div>
+            <div class="bg-anker-nav border border-anker-border rounded-xl p-4 text-center">
+              <div class="text-[11px] text-anker-muted uppercase font-bold tracking-wider mb-1">Med Chk</div>
+              <div id="eda-median-chunk" class="text-[24px] font-bold text-white">--</div>
+            </div>
+            <div class="bg-anker-nav border border-anker-border rounded-xl p-4 text-center">
+              <div class="text-[11px] text-anker-muted uppercase font-bold tracking-wider mb-1">Std Dev</div>
+              <div id="eda-std-chunk" class="text-[24px] font-bold text-white">--</div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            <div class="bg-anker-nav border border-anker-border rounded-xl p-4">
+              <img id="chart-chunk-len" src="/static/eda/chunk_length_distribution.png" class="w-full opacity-80 hover:opacity-100 transition filter invert hue-rotate-180">
+            </div>
+            <div class="bg-anker-nav border border-anker-border rounded-xl p-4">
+              <img id="chart-keywords" src="/static/eda/word_frequency.png" class="w-full opacity-80 hover:opacity-100 transition filter invert hue-rotate-180">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= TAB 3: BENCHMARK ================= -->
+    <div id="tab-compare" class="tab-content hidden space-y-8">
+      
+      <div class="bg-card-gradient border border-anker-border rounded-[16px] p-6 md:p-8 shadow-xl">
+        <h2 class="text-[24px] font-bold mb-2">Retriever Diagnostics</h2>
+        <p class="text-[14px] text-anker-muted mb-6">Compare vector (FAISS) vs lexical (BM25/TF-IDF) overlap.</p>
+        
+        <div class="flex flex-col sm:flex-row items-center gap-4">
+          <input type="text" id="compare-query-input" placeholder="Query to benchmark..." class="flex-1 w-full bg-anker-bg border border-anker-border rounded-[10px] px-4 py-3 outline-none text-white focus:border-anker-cyan transition">
+          <button onclick="runBenchmark()" id="benchmark-btn" class="w-full sm:w-auto px-6 py-3 rounded-[10px] bg-anker-pill border border-anker-border hover:border-anker-cyan hover:text-anker-cyan font-bold transition">
+            Run Benchmark
+          </button>
+        </div>
+
+        <div id="benchmark-overlap-pills" class="mt-6 pt-6 border-t border-anker-border flex flex-wrap gap-4 hidden">
+          <div class="bg-anker-bg px-4 py-2 rounded-lg border border-anker-border text-[13px] text-anker-muted">Dense &cap; BM25: <span id="overlap-dense-bm25" class="text-white font-bold ml-1">0</span></div>
+          <div class="bg-anker-bg px-4 py-2 rounded-lg border border-anker-border text-[13px] text-anker-muted">Dense &cap; TF-IDF: <span id="overlap-dense-tfidf" class="text-white font-bold ml-1">0</span></div>
+          <div class="bg-anker-bg px-4 py-2 rounded-lg border border-anker-border text-[13px] text-anker-muted">All 3 Shared: <span id="overlap-all" class="text-anker-cyan font-bold ml-1">0</span></div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-card-gradient border border-anker-border rounded-[16px] overflow-hidden">
+          <div class="bg-anker-nav px-5 py-4 border-b border-anker-border flex justify-between items-center">
+            <span class="font-bold text-[14px]">Dense FAISS</span>
+            <span id="bench-dense-latency" class="text-[12px] font-mono text-anker-cyan">-- ms</span>
+          </div>
+          <div id="bench-dense-hits" class="p-5 space-y-4"></div>
+        </div>
+        <div class="bg-card-gradient border border-anker-border rounded-[16px] overflow-hidden">
+          <div class="bg-anker-nav px-5 py-4 border-b border-anker-border flex justify-between items-center">
+            <span class="font-bold text-[14px]">BM25 Lexical</span>
+            <span id="bench-bm25-latency" class="text-[12px] font-mono text-purple-400">-- ms</span>
+          </div>
+          <div id="bench-bm25-hits" class="p-5 space-y-4"></div>
+        </div>
+        <div class="bg-card-gradient border border-anker-border rounded-[16px] overflow-hidden">
+          <div class="bg-anker-nav px-5 py-4 border-b border-anker-border flex justify-between items-center">
+            <span class="font-bold text-[14px]">TF-IDF</span>
+            <span id="bench-tfidf-latency" class="text-[12px] font-mono text-anker-green">-- ms</span>
+          </div>
+          <div id="bench-tfidf-hits" class="p-5 space-y-4"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="/static/scripts.js?v=4"></script>
+  
+  <!-- CSS hack for scripts.js citations to match the Ankergames game card metadata layout -->
+  <style>
+    #source-chips {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 12px !important;
+    }
+    #source-chips > span {
+      background: #111724 !important; /* Card background */
+      border: 1px solid #1f2937 !important;
+      padding: 16px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      border-radius: 12px !important;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3) !important;
+    }
+    #source-chips > span > svg { display: none !important; }
+    
+    #source-chips > span > .truncate {
+      color: #ffffff !important;
+      font-size: 15px !important;
+      font-weight: 700 !important;
+      margin-bottom: 8px !important;
+      white-space: normal !important;
+      max-width: 100% !important;
+    }
+    
+    #source-chips > span > .text-gray-500 {
+      color: #1cb0f6 !important; /* Cyan accent for metadata */
+      font-size: 13px !important;
+      font-weight: 600 !important;
+      background: rgba(28, 176, 246, 0.1) !important;
+      padding: 4px 8px !important;
+      border-radius: 4px !important;
+    }
+  </style>
+</body>
+</html>
