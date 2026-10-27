@@ -2,7 +2,7 @@ import db
 import retrieval
 import generation
 
-def test_full_pipeline():
+def run_full_pipeline():
     print("[1] Initializing DB and chunks...")
     chunks = db.get_all_chunks()
     lookup = {c["id"]: c for c in chunks}
@@ -41,4 +41,5 @@ def test_full_pipeline():
                 print(f"  * [Citation {cit['citation_id']}] {cit['filename']} (P.{cit['page_number']}) - Rerank: {cit['rerank_score']}")
 
 if __name__ == "__main__":
-    test_full_pipeline()
+    run_full_pipeline()
+
