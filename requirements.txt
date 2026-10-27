@@ -9,3 +9,7 @@ tiktoken
 sqlalchemy
 pandas
 requests
+PyPDF2
+scikit-learn
+rank-bm25
+matplotlib
