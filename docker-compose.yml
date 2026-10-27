@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  rag-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: enterprise-pdf-rag:2.4.0
+    container_name: pdf-rag-service
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - rag-data:/app/data
+      - rag-eda:/app/static/eda
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+volumes:
+  rag-data:
+    driver: local
+  rag-eda:
+    driver: local
