@@ -1,5 +1,6 @@
 # Environments
 venv/
+.venv/
 env/
 .env
 
@@ -7,6 +8,9 @@ env/
 __pycache__/
 *.pyc
 .pytest_cache/
+.coverage
+htmlcov/
+
 
 # Databases and large binary files
 data/
