@@ -41,11 +41,13 @@ def extract_key_points(query: str, text: str, max_points: int = 4) -> List[str]:
             
     return picked
 
-# Test on chunk text
-import db
-chunks = db.get_all_chunks()
-c0 = chunks[0]['text']
-pts = extract_key_points('What is Hibernate and what does it provide?', c0)
-print('Extracted points:')
-for p in pts:
-    print('•', p)
+if __name__ == '__main__':
+    # Test on chunk text
+    import db
+    chunks = db.get_all_chunks()
+    if chunks:
+        c0 = chunks[0]['text']
+        pts = extract_key_points('What is Hibernate and what does it provide?', c0)
+        print('Extracted points:')
+        for p in pts:
+            print('•', p)
