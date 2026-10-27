@@ -22,6 +22,8 @@ def get_repos():
     global _db, _doc_repo, _chunk_repo
     if _db is None:
         _db = DatabaseManager()
+        from src.persistence.migrations import MigrationManager
+        MigrationManager(_db).initialize_schema()
         _doc_repo = DocumentRepository(_db)
         _chunk_repo = ChunkRepository(_db)
     return _doc_repo, _chunk_repo

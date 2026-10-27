@@ -8,7 +8,13 @@ from src.api.routes import api_bp
 
 
 @pytest.fixture
-def test_client():
+def test_client(temp_db):
+    import src.api.routes as routes
+    from src.persistence.repository import DocumentRepository, ChunkRepository
+    routes._db = temp_db
+    routes._doc_repo = DocumentRepository(temp_db)
+    routes._chunk_repo = ChunkRepository(temp_db)
+
     app = Flask(__name__)
     app.register_blueprint(api_bp)
     app.config["TESTING"] = True
